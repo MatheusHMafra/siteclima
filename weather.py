@@ -2,7 +2,6 @@ import time
 import json
 import logging
 import requests
-import datetime
 
 logging.basicConfig(
     level=logging.INFO,
@@ -15,7 +14,7 @@ def load_config(filename="weather_config.json"):
     try:
         with open(filename, "r") as config_file:
             return json.load(config_file)
-    except (FileNotFoundError, JSONDecodeError) as e:
+    except (FileNotFoundError, json.JSONDecodeError) as e:
         logging.error(f"Error loading config file '{filename}': {e}")
         return {}
 
