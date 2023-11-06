@@ -1,0 +1,5 @@
+{
+    "API_URL": "https://api.open-meteo.com/v1/forecast?latitude=-26.9078&longitude=-48.6619&hourly=temperature_2m,relativehumidity_2m,apparent_temperature,precipitation_probability,precipitation,rain,visibility,evapotranspiration,windspeed_80m,winddirection_80m,temperature_80m&daily=weathercode,temperature_2m_max,temperature_2m_min,apparent_temperature_max,apparent_temperature_min,sunrise,sunset,precipitation_sum,rain_sum,precipitation_hours,precipitation_probability_max&current_weather=true&timeformat=unixtime&timezone=America%2FSao_Paulo",
+    "UPDATE_INTERVAL": 1800,
+    "OUTPUT_FILE": "server/weather_data.json"
+}

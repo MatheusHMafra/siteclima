@@ -1,5 +1,0 @@
-{
-    "API_URL": "api do open meteo",
-    "UPDATE_INTERVAL": 1800,
-    "OUTPUT_FILE": "weather_data.json"
-}

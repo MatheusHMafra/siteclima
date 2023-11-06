@@ -10,7 +10,7 @@ logging.basicConfig(
 )
 
 
-def load_config(filename="weather_config.json"):
+def load_config(filename="server/weather_config.json"):
     try:
         with open(filename, "r") as config_file:
             return json.load(config_file)

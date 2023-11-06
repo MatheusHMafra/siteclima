@@ -1,3 +1,18 @@
+:root {
+    --background-color: #1e1e1e;
+    --text-color: #fff;
+    --border-color: whitesmoke;
+}
+
+body {
+    font-family: 'Roboto', sans-serif;
+    background-color: var(--background-color);
+    color: var(--text-color);
+    margin: 0;
+    padding: 0;
+    display: flex;
+}
+
 /* Estilo para o contêiner principal do tempo atual */
 #container-tempo {
     margin-bottom: 20px;
@@ -5,6 +20,7 @@
 
 #container-tempo,
 #container-tempo-diario {
+    width: 50%;
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -12,6 +28,7 @@
     background-color: var(--background-color-2);
     padding: 10px;
     margin-bottom: 20px;
+    border: 1px solid var(--border-color);
 }
 
 /* Estilo para o contêiner do tempo atual */
@@ -36,6 +53,7 @@
 
 #controles button {
     background-color: var(--background-color);
+    border: 1px solid var(--border-color);
     color: var(--text-color);
     border: none;
     border-radius: 5px;

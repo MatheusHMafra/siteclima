@@ -15,6 +15,40 @@ var horamax; // Índice da hora máxima
 const tempoElement = document.getElementById("tempo");
 const tempodiarioElement = document.getElementById("tempo-diario");
 
+var templateHora = `
+    <h2>Clima de Itajaí {{=it.horario}}</h2>
+    <p>Temperatura: {{=it.temperatura}}°C</p>
+    <p>Umidade: {{=it.umidade}}%</p>
+    <p>Sensação Térmica: {{=it.temperaturaAparente}}°C</p>
+    <p>Probabilidade de Precipitação: {{=it.probabilidadePrecipitacao}}%</p>
+    <p>Precipitação Total: {{=it.precipitacao}} mm</p>
+    <p>Chuva: {{=it.chuva}} mm</p>
+    <p>Visibilidade: {{=it.visibilidade}} metros</p>
+    <p>Evapotranspiração: {{=it.evapotranspiracao}} mm</p>
+    <p>Velocidade do Vento: {{=it.velocidadeVento}} km/h</p>
+    <p>Direção do Vento: {{=it.direcaoVento}}°</p>
+    <p>Temperatura a 80m: {{=it.temperatura80m}}°C</p>
+`;
+
+var templateDiario = `
+    <h2>Clima de Itajaí {{=it.dia}}</h2>
+    <p>{{=it.weathercodeDiario}}</p>
+    <p>Temperatura Mínima Diária: {{=it.temperaturaMinimaDiaria}}°C</p>
+    <p>Temperatura Máxima Diária: {{=it.temperaturaMaximaDiaria}}°C</p>
+    <p>Sensação Térmica Mínima Diária: {{=it.temperaturaAparenteMinimaDiaria}}°C</p>
+    <p>Sensação Térmica Máxima Diária: {{=it.temperaturaAparenteMaximaDiaria}}°C</p>
+    <p>Nascer do Sol Diário: {{=it.nascerSolDiario}}</p>
+    <p>Pôr do Sol Diário: {{=it.porSolDiario}}</p>
+    <p>Precipitação Total Diária: {{=it.precipitacaoTotalDiaria}} mm</p>
+    <p>Chuva Total Diária: {{=it.chuvaTotalDiaria}} mm</p>
+    <p>Horas de Precipitação Diária: {{=it.horasPrecipitacaoDiaria}} horas</p>
+    <p>Probabilidade de Precipitação Máxima Diária: {{=it.probabilidadePrecipitacaoMaximaDiaria}}%</p>
+`;
+
+// Compila o template
+var renderizadoHora = doT.template(templateHora);
+var renderizadoDiario = doT.template(templateDiario);
+
 // Função para obter a descrição do tempo com base no código
 function getWeatherDescription(code) {
     var weatherCodeMapping = {
@@ -73,16 +107,30 @@ function converterHorarioAgoraParaValor() {
     return valor.toString();
 }
 
+var xhr = new XMLHttpRequest(); // Cria o pedido HTTP
+xhr.open("GET", "server/weather_data.json", true); // Configura o pedido HTTP
+
 // Função para buscar informações do tempo
 async function fetchWeatherData() {
     try {
         // Se a função fetchWeatherData() já foi executada, não a execute novamente
         if (!fetchJaExecutado) {
-            const response = await fetch("weather_data.json");
-            data = await response.json();
+            xhr.send(); // Envia o pedido HTTP
+            xhr.onload = function () { // Quando o pedido for carregado
+                if (xhr.status >= 200 && xhr.status < 300) { // Se o status for entre 200 e 299
+                    // O pedido foi bem-sucedido
+                    data = JSON.parse(xhr.responseText); // Armazena o arquivo JSON na variável data
+                } else {
+                    // Lidar com erros, se necessário
+                    console.log("Erro ao carregar o arquivo JSON");
+                }
+            };
+            // Espera o pedido ser carregado
+            await new Promise(resolve => setTimeout(resolve, 20));
             horaAtual = converterHorarioAgoraParaValor();
             horamax = data.hourly.time.length - 1;
             diamax = data.daily.time.length - 1;
+            fetchJaExecutado = true;
         }
 
         const weatherData = {
@@ -112,48 +160,16 @@ async function fetchWeatherData() {
             probabilidadePrecipitacaoMaximaDiaria: data.daily.precipitation_probability_max[diaAtual]
         };
 
-        fetchJaExecutado = true;
-
         updateWeatherContent(weatherData);
     } catch (error) {
-        console.error(`Erro ao buscar dados do tempo: ${error}, ${error.message}`);
+        console.error(`Erro ao buscar dados do tempo: ${error}, ${error.message} `);
     }
 }
 
 // Função para atualizar o conteúdo HTML com as informações do tempo
 function updateWeatherContent(data) {
-    tempo = `
-    <h2>Clima de Itajaí ${data.horario}</h2>
-    <p>Temperatura: ${data.temperatura}°C</p>
-    <p>Umidade: ${data.umidade}%</p>
-    <p>Sensação Térmica: ${data.temperaturaAparente}°C</p>
-    <p>Probabilidade de Precipitação: ${data.probabilidadePrecipitacao}%</p>
-    <p>Precipitação Total: ${data.precipitacao} mm</p>
-    <p>Chuva: ${data.chuva} mm</p>
-    <p>Visibilidade: ${data.visibilidade} metros</p>
-    <p>Evapotranspiração: ${data.evapotranspiracao} mm</p>
-    <p>Velocidade do Vento: ${data.velocidadeVento} km/h</p>
-    <p>Direção do Vento: ${data.direcaoVento}°</p>
-    <p>Temperatura a 80m: ${data.temperatura80m}°C</p>
-    `;
-
-    tempodiario = `
-    <h2>Clima de Itajaí ${data.dia}</h2>
-    <p>${data.weathercodeDiario}</p>
-    <p>Temperatura Mínima Diária: ${data.temperaturaMinimaDiaria}°C</p>
-    <p>Temperatura Máxima Diária: ${data.temperaturaMaximaDiaria}°C</p>
-    <p>Sensação Térmica Mínima Diária: ${data.temperaturaAparenteMinimaDiaria}°C</p>
-    <p>Sensação Térmica Máxima Diária: ${data.temperaturaAparenteMaximaDiaria}°C</p>
-    <p>Nascer do Sol Diário: ${data.nascerSolDiario}</p>
-    <p>Pôr do Sol Diário: ${data.porSolDiario}</p>
-    <p>Precipitação Total Diária: ${data.precipitacaoTotalDiaria} mm</p>
-    <p>Chuva Total Diária: ${data.chuvaTotalDiaria} mm</p>
-    <p>Horas de Precipitação Diária: ${data.horasPrecipitacaoDiaria} horas</p>
-    <p>Probabilidade de Precipitação Máxima Diária: ${data.probabilidadePrecipitacaoMaximaDiaria}%</p>
-    `;
-
-    tempoElement.innerHTML = tempo;
-    tempodiarioElement.innerHTML = tempodiario;
+    tempoElement.innerHTML = renderizadoHora(data);
+    tempodiarioElement.innerHTML = renderizadoDiario(data);
 }
 
 fetchWeatherData();
@@ -167,12 +183,13 @@ document.getElementById("anteriorhora").addEventListener("click", function () {
         horario = horario[0]; // Pega o primeiro horário encontrado
         if (horario == "00:00" && diaAtual > 0) {
             diaAtual--;
+            fetchWeatherData();
         }
     }
     if (horaAtual > 0) {
         horaAtual--;
+        fetchWeatherData();
     }
-    fetchWeatherData();
 });
 
 document.getElementById("proximahora").addEventListener("click", function () {
@@ -184,27 +201,28 @@ document.getElementById("proximahora").addEventListener("click", function () {
         horario = horario[0]; // Pega o primeiro horário encontrado
         if (horario == "23:00" && diaAtual < diamax) {
             diaAtual++;
+            fetchWeatherData();
         }
     }
     if (horaAtual < horamax) {
         horaAtual++;
+        fetchWeatherData();
     }
-    fetchWeatherData();
 });
 
 // Eventos para os botões de navegação do tempo diário
 document.getElementById("anteriordia").addEventListener("click", function () {
     if (diaAtual > 0) {
         diaAtual--;
+        fetchWeatherData();
     }
     horaAtual = (diaAtual * 24) + agora;
-    fetchWeatherData();
 });
 
 document.getElementById("proximodia").addEventListener("click", function () {
     if (diaAtual < diamax) {
         diaAtual++;
+        fetchWeatherData();
     }
     horaAtual = (diaAtual * 24) + agora;
-    fetchWeatherData();
 });
