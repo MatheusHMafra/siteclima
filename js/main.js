@@ -179,10 +179,10 @@ async function fetchWeatherData() {
     }
 }
 
-// Função para atualizar o conteúdo HTML com as informações do tempo
+// Função para atualizar o conteúdo HTML com as informações do tempo, usando o template compilado anteriormente e os dados do tempo como parâmetro para o template
 function updateWeatherContent(data) {
-    tempoHoraElement.innerHTML = renderizadoHora(data);
-    tempoDiarioElement.innerHTML = renderizadoDiario(data);
+    tempoHoraElement.innerHTML = renderizadoHora(data); // Atualiza o conteúdo HTML com as informações do tempo hora
+    tempoDiarioElement.innerHTML = renderizadoDiario(data); // Atualiza o conteúdo HTML com as informações do tempo diário
 
     if (eventosAdicionados == false) {
         // Eventos para os botões de navegação do tempo horário
