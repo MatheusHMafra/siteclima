@@ -194,13 +194,12 @@ function updateWeatherContent(data) {
                 horario = horario[0]; // Pega o primeiro horário encontrado
                 if (horario == "00:00" && diaAtual > 0) {
                     diaAtual--;
-                    fetchWeatherData();
                 }
             }
             if (horaAtual > 0) {
                 horaAtual--;
-                fetchWeatherData();
             }
+            fetchWeatherData();
         });
 
         document.getElementById("proximahora").addEventListener("click", function () {
@@ -212,30 +211,29 @@ function updateWeatherContent(data) {
                 horario = horario[0]; // Pega o primeiro horário encontrado
                 if (horario == "23:00" && diaAtual < diamax) {
                     diaAtual++;
-                    fetchWeatherData();
                 }
             }
             if (horaAtual < horamax) {
                 horaAtual++;
-                fetchWeatherData();
             }
+            fetchWeatherData();
         });
 
         // Eventos para os botões de navegação do tempo diário
         document.getElementById("anteriordia").addEventListener("click", function () {
             if (diaAtual > 0) {
                 diaAtual--;
-                fetchWeatherData();
             }
             horaAtual = (diaAtual * 24) + agora;
+            fetchWeatherData();
         });
 
         document.getElementById("proximodia").addEventListener("click", function () {
             if (diaAtual < diamax) {
                 diaAtual++;
-                fetchWeatherData();
             }
             horaAtual = (diaAtual * 24) + agora;
+            fetchWeatherData();
         });
 
         eventosAdicionados = true;
