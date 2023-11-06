@@ -4,6 +4,7 @@ var tempodiario;
 var agora = parseInt(converterHorarioAgoraParaValor()); // Hora atual
 
 var fetchJaExecutado = false; // Flag para verificar se a função fetchWeatherData() já foi executada
+var eventosAdicionados = false; // Flag para verificar se os eventos já foram adicionados
 var data; // Variável para armazenar os dados do tempo
 
 var diaAtual = 0; // Índice do dia atual
@@ -12,10 +13,11 @@ var horaAtual = 0; // Índice da hora atual
 var diamax; // Índice do dia máximo
 var horamax; // Índice da hora máxima
 
-const tempoElement = document.getElementById("tempo");
-const tempodiarioElement = document.getElementById("tempo-diario");
+const tempoHoraElement = document.getElementById("container-tempo");
+const tempoDiarioElement = document.getElementById("container-tempo-diario");
 
 var templateHora = `
+<div id="tempo">
     <h2>Clima de Itajaí {{=it.horario}}</h2>
     <p>Temperatura: {{=it.temperatura}}°C</p>
     <p>Umidade: {{=it.umidade}}%</p>
@@ -28,9 +30,15 @@ var templateHora = `
     <p>Velocidade do Vento: {{=it.velocidadeVento}} km/h</p>
     <p>Direção do Vento: {{=it.direcaoVento}}°</p>
     <p>Temperatura a 80m: {{=it.temperatura80m}}°C</p>
+</div>
+<div id="controles">
+    <button id="anteriorhora">&lt;</button>
+    <button id="proximahora">&gt;</button>
+</div>
 `;
 
 var templateDiario = `
+<div id="tempo-diario">
     <h2>Clima de Itajaí {{=it.dia}}</h2>
     <p>{{=it.weathercodeDiario}}</p>
     <p>Temperatura Mínima Diária: {{=it.temperaturaMinimaDiaria}}°C</p>
@@ -43,6 +51,11 @@ var templateDiario = `
     <p>Chuva Total Diária: {{=it.chuvaTotalDiaria}} mm</p>
     <p>Horas de Precipitação Diária: {{=it.horasPrecipitacaoDiaria}} horas</p>
     <p>Probabilidade de Precipitação Máxima Diária: {{=it.probabilidadePrecipitacaoMaximaDiaria}}%</p>
+</div>
+<div id="controles">
+    <button id="anteriordia">&lt;</button>
+    <button id="proximodia">&gt;</button>
+</div>
 `;
 
 // Compila o template
@@ -168,61 +181,65 @@ async function fetchWeatherData() {
 
 // Função para atualizar o conteúdo HTML com as informações do tempo
 function updateWeatherContent(data) {
-    tempoElement.innerHTML = renderizadoHora(data);
-    tempodiarioElement.innerHTML = renderizadoDiario(data);
+    tempoHoraElement.innerHTML = renderizadoHora(data);
+    tempoDiarioElement.innerHTML = renderizadoDiario(data);
+
+    if (eventosAdicionados == false) {
+        // Eventos para os botões de navegação do tempo horário
+        document.getElementById("anteriorhora").addEventListener("click", function () {
+            var textoCompleto = document.querySelector("#tempo h2").textContent.trim();
+            var regexHorario = /\d{1,2}:\d{2}/; // Expressão regular para encontrar horários no formato HH:mm
+            var horario = textoCompleto.match(regexHorario);
+            if (horario) {
+                horario = horario[0]; // Pega o primeiro horário encontrado
+                if (horario == "00:00" && diaAtual > 0) {
+                    diaAtual--;
+                    fetchWeatherData();
+                }
+            }
+            if (horaAtual > 0) {
+                horaAtual--;
+                fetchWeatherData();
+            }
+        });
+
+        document.getElementById("proximahora").addEventListener("click", function () {
+            var textoCompleto = document.querySelector("#tempo h2").textContent.trim();
+            var regexHorario = /\d{1,2}:\d{2}/; // Expressão regular para encontrar horários no formato HH:mm
+            var horario = textoCompleto.match(regexHorario);
+
+            if (horario) {
+                horario = horario[0]; // Pega o primeiro horário encontrado
+                if (horario == "23:00" && diaAtual < diamax) {
+                    diaAtual++;
+                    fetchWeatherData();
+                }
+            }
+            if (horaAtual < horamax) {
+                horaAtual++;
+                fetchWeatherData();
+            }
+        });
+
+        // Eventos para os botões de navegação do tempo diário
+        document.getElementById("anteriordia").addEventListener("click", function () {
+            if (diaAtual > 0) {
+                diaAtual--;
+                fetchWeatherData();
+            }
+            horaAtual = (diaAtual * 24) + agora;
+        });
+
+        document.getElementById("proximodia").addEventListener("click", function () {
+            if (diaAtual < diamax) {
+                diaAtual++;
+                fetchWeatherData();
+            }
+            horaAtual = (diaAtual * 24) + agora;
+        });
+
+        eventosAdicionados = true;
+    }
 }
 
 fetchWeatherData();
-
-// Eventos para os botões de navegação do tempo horário
-document.getElementById("anteriorhora").addEventListener("click", function () {
-    var textoCompleto = document.querySelector("#tempo h2").textContent.trim();
-    var regexHorario = /\d{1,2}:\d{2}/; // Expressão regular para encontrar horários no formato HH:mm
-    var horario = textoCompleto.match(regexHorario);
-    if (horario) {
-        horario = horario[0]; // Pega o primeiro horário encontrado
-        if (horario == "00:00" && diaAtual > 0) {
-            diaAtual--;
-            fetchWeatherData();
-        }
-    }
-    if (horaAtual > 0) {
-        horaAtual--;
-        fetchWeatherData();
-    }
-});
-
-document.getElementById("proximahora").addEventListener("click", function () {
-    var textoCompleto = document.querySelector("#tempo h2").textContent.trim();
-    var regexHorario = /\d{1,2}:\d{2}/; // Expressão regular para encontrar horários no formato HH:mm
-    var horario = textoCompleto.match(regexHorario);
-
-    if (horario) {
-        horario = horario[0]; // Pega o primeiro horário encontrado
-        if (horario == "23:00" && diaAtual < diamax) {
-            diaAtual++;
-            fetchWeatherData();
-        }
-    }
-    if (horaAtual < horamax) {
-        horaAtual++;
-        fetchWeatherData();
-    }
-});
-
-// Eventos para os botões de navegação do tempo diário
-document.getElementById("anteriordia").addEventListener("click", function () {
-    if (diaAtual > 0) {
-        diaAtual--;
-        fetchWeatherData();
-    }
-    horaAtual = (diaAtual * 24) + agora;
-});
-
-document.getElementById("proximodia").addEventListener("click", function () {
-    if (diaAtual < diamax) {
-        diaAtual++;
-        fetchWeatherData();
-    }
-    horaAtual = (diaAtual * 24) + agora;
-});
