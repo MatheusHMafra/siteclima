@@ -12,6 +12,15 @@ body {
     padding: 0;
 }
 
+h2 {
+    font-size: 24px;
+    margin: 0;
+}
+
+small {
+    font-size: 12px;
+}
+
 #main {
     display: flex;
     justify-content: center;
@@ -53,7 +62,7 @@ body {
     margin: 5px 0;
 }
 
-#controles button {
+button {
     border: 1px solid var(--border-color);
     box-shadow: 0 0 0 1px var(--border-color);
     border-radius: 5px;

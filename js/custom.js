@@ -23,7 +23,7 @@ var longitude = window.location.href.split("?")[1].split("&")[1].split("=")[1];
 if (latitude == "" || longitude == "") {
     latitude = "-26.9078";
     longitude = "-48.6619";
-    document.getElementById("cidade").innerHTML = "Padrão!!";
+    document.getElementById("cidade").innerHTML = `Clima de ${latitude}, ${longitude} (Padrão) <button id="voltar">Voltar</button>`;
 }
 
 if (tempoHoraElement == null || tempoDiarioElement == null) {
@@ -151,7 +151,7 @@ async function fetchWeatherData() {
                 }
             };
             // Espera o pedido ser carregado
-            await new Promise(resolve => setTimeout(resolve, 320));
+            await new Promise(resolve => setTimeout(resolve, 500));
             // Executa o pedido
             horaAtual = converterHorarioAgoraParaValor();
             horamax = data.hourly.time.length - 1;
@@ -252,6 +252,10 @@ async function waitForTemplateElements() {
         }
         horaAtual = (diaAtual * 24) + agora;
         fetchWeatherData();
+    });
+
+    document.getElementById("voltar").addEventListener("click", function () {
+        window.location.href = "/";
     });
 };
 

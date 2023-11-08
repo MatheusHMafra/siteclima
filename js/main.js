@@ -18,7 +18,7 @@ const tempoDiarioElement = document.getElementById("container-tempo-diario");
 
 var templateHora = `
 <div id="tempo">
-    <h2>Clima de Itajaí {{=it.horario}}</h2>
+    <h2>{{=it.horario}}</h2>
     <p>Temperatura: {{=it.temperatura}}°C</p>
     <p>Umidade: {{=it.umidade}}%</p>
     <p>Sensação Térmica: {{=it.temperaturaAparente}}°C</p>
@@ -39,7 +39,7 @@ var templateHora = `
 
 var templateDiario = `
 <div id="tempo-diario">
-    <h2>Clima de Itajaí {{=it.dia}}</h2>
+    <h2>{{=it.dia}}</h2>
     <p>{{=it.weathercodeDiario}}</p>
     <p>Temperatura Mínima Diária: {{=it.temperaturaMinimaDiaria}}°C</p>
     <p>Temperatura Máxima Diária: {{=it.temperaturaMaximaDiaria}}°C</p>

@@ -9,16 +9,30 @@
 </head>
 
 <body>
+    <h1 id="cidade" style="text-align: center;">Clima de Itajaí</h1>
+
     <div id="main">
         <container id="container-tempo"></container>
 
         <container id="container-tempo-diario"></container>
     </div>
 
+    <br>
+    <br>
+
     <div style="text-align: center;">
         <h2>
             Clima Customizado
         </h2>
+        <small>
+            (Digite a latitude e longitude)
+            <br>
+            (Se não inserir nada, será usado a latitude e longitude de Itajaí)
+        </small>
+
+        <br>
+        <br>
+        
         <div>
             <label for="latitude">
                 Latitude
@@ -31,7 +45,8 @@
             </label>
             <br>
             <input type="text" name="longitude" id="longitude" />
-            <br>    
+            <br>
+            <br>
             <button id="botao">
                 Buscar
             </button>
