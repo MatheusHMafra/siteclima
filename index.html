@@ -9,9 +9,34 @@
 </head>
 
 <body>
-    <container id="container-tempo"></container>
+    <div id="main">
+        <container id="container-tempo"></container>
 
-    <container id="container-tempo-diario"></container>
+        <container id="container-tempo-diario"></container>
+    </div>
+
+    <div style="text-align: center;">
+        <h2>
+            Clima Customizado
+        </h2>
+        <div>
+            <label for="latitude">
+                Latitude
+            </label>
+            <br>
+            <input type="text" name="latitude" id="latitude" />
+            <br>
+            <label for="Longitude">
+                Longitude
+            </label>
+            <br>
+            <input type="text" name="longitude" id="longitude" />
+            <br>    
+            <button id="botao">
+                Buscar
+            </button>
+        </div>
+    </div>
 
     <script type="text/javascript" src="js/doT.min.js"></script>
     <script type="text/javascript" src="js/main.js"></script>

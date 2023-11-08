@@ -16,9 +16,23 @@ var horamax; // Índice da hora máxima
 const tempoHoraElement = document.getElementById("container-tempo");
 const tempoDiarioElement = document.getElementById("container-tempo-diario");
 
+var latitude = window.location.href.split("?")[1].split("&")[0].split("=")[1];
+var longitude = window.location.href.split("?")[1].split("&")[1].split("=")[1];
+
+// Verifica se a latitude e longitude são válidas
+if (latitude == "" || longitude == "") {
+    latitude = "-26.9078";
+    longitude = "-48.6619";
+    document.getElementById("cidade").innerHTML = "Padrão!!";
+}
+
+if (tempoHoraElement == null || tempoDiarioElement == null) {
+    console.error("Elementos HTML não encontrados");
+}
+
 var templateHora = `
 <div id="tempo">
-    <h2>Clima de Itajaí {{=it.horario}}</h2>
+    <h2>{{=it.horario}}</h2>
     <p>Temperatura: {{=it.temperatura}}°C</p>
     <p>Umidade: {{=it.umidade}}%</p>
     <p>Sensação Térmica: {{=it.temperaturaAparente}}°C</p>
@@ -39,7 +53,7 @@ var templateHora = `
 
 var templateDiario = `
 <div id="tempo-diario">
-    <h2>Clima de Itajaí {{=it.dia}}</h2>
+    <h2>{{=it.dia}}</h2>
     <p>{{=it.weathercodeDiario}}</p>
     <p>Temperatura Mínima Diária: {{=it.temperaturaMinimaDiaria}}°C</p>
     <p>Temperatura Máxima Diária: {{=it.temperaturaMaximaDiaria}}°C</p>
@@ -116,14 +130,16 @@ function converterHorarioAgoraParaValor() {
     return valor.toString();
 }
 
+const link = "https://api.open-meteo.com/v1/forecast?latitude=" + latitude + "&longitude=" + longitude + "&hourly=temperature_2m,relativehumidity_2m,apparent_temperature,precipitation_probability,precipitation,rain,visibility,evapotranspiration,windspeed_80m,winddirection_80m,temperature_80m&daily=weathercode,temperature_2m_max,temperature_2m_min,apparent_temperature_max,apparent_temperature_min,sunrise,sunset,precipitation_sum,rain_sum,precipitation_hours,precipitation_probability_max&current_weather=true&timeformat=unixtime&timezone=America%2FSao_Paulo";
+
 var xhr = new XMLHttpRequest(); // Cria o pedido HTTP
-xhr.open("GET", "server/weather_data.json", true); // Configura o pedido HTTP
 
 // Função para buscar informações do tempo
 async function fetchWeatherData() {
     try {
         // Se a função fetchWeatherData() já foi executada, não a execute novamente
         if (!fetchJaExecutado) {
+            xhr.open("GET", link, true); // Configura o pedido HTTP
             xhr.send(); // Envia o pedido HTTP
             xhr.onload = function () { // Quando o pedido for carregado
                 if (xhr.status >= 200 && xhr.status < 300) { // Se o status for entre 200 e 299
@@ -135,7 +151,8 @@ async function fetchWeatherData() {
                 }
             };
             // Espera o pedido ser carregado
-            await new Promise(resolve => setTimeout(resolve, 20));
+            await new Promise(resolve => setTimeout(resolve, 320));
+            // Executa o pedido
             horaAtual = converterHorarioAgoraParaValor();
             horamax = data.hourly.time.length - 1;
             diamax = data.daily.time.length - 1;
@@ -176,7 +193,7 @@ async function fetchWeatherData() {
 }
 
 // Função para atualizar o conteúdo HTML com as informações do tempo, usando o template compilado anteriormente e os dados do tempo como parâmetro para o template
-function updateWeatherContent(data) {
+async function updateWeatherContent(data) {
     // Função para renderizar o tempo diário
     tempoHoraElement.innerHTML = doT.template(templateHora)(data);
     // Função para renderizar o tempo diário
@@ -239,9 +256,3 @@ async function waitForTemplateElements() {
 };
 
 fetchWeatherData();
-
-document.getElementById("botao").addEventListener("click", function () {
-    var latitude = document.getElementById("latitude").value;
-    var longitude = document.getElementById("longitude").value;
-    document.location.href = "custom.html?latitude=" + latitude + "&longitude=" + longitude;
-});
