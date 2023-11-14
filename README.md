@@ -1,7 +1,10 @@
 # Dados do clima
-Os dados do clima são obtidos através do script weather.py.  
+Os dados do clima são obtidos através do script weather.py.
 ```bash
-python weather.py
+pip install requests
+``` 
+```bash
+python server/weather.py
 ```
 O script weather.py pode ser executado em um intervalo de tempo definido no arquivo weather_config.json, ele está localizado dentro da pasta json.
 O arquivo weather_config.json contém os seguintes atributos:
